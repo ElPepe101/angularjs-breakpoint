@@ -28,13 +28,17 @@ breakpointApp.directive('breakpoint', ['$window', '$rootScope', function($window
             }
 
             function setClass(windowWidth){
-                var breakpointClass = breakpoints[Object.keys(breakpoints)[0]];
+                var setClass = breakpoints[Object.keys(breakpoints)[0]];
+                // divide the window width by the HTML font size to get the em value
+                var fontsize = parseFloat(windowWidth / $window.getComputedStyle(document.getElementsByTagName('html')[0], null).getPropertyValue('font-size').replace(/px/g, ''));
+
                 for (var breakpoint in breakpoints){
-                    if (breakpoint < windowWidth) breakpointClass = breakpoints[breakpoint];
+                    if(breakpoint.indexOf('em') != -1) windowWidth = fontsize;
+                    if (parseFloat(breakpoint.replace(/em/g, '')) < windowWidth) setClass = breakpoints[breakpoint];
                     element.removeClass(breakpoints[breakpoint]);
                 }
-                element.addClass(breakpointClass);
-                scope.breakpoint.class  = breakpointClass;
+                element.addClass(setClass);
+                scope.breakpoint.class  = setClass;
                 if(!scope.$$phase) scope.$apply();
             }
         }
